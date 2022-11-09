@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MvvmGen.Extensions;
 using MvvmGen.Model;
+using MvvmGen.SourceGenerators.Generators;
 
 namespace MvvmGen.Generators
 {
@@ -32,22 +33,24 @@ namespace MvvmGen.Generators
             vmBuilder.Append($"public {viewModelClassName}(");
             injectionsToGenerate ??= Enumerable.Empty<InjectionToGenerate>();
 
-            var first = true;
+            //var first = true;
+            //string? eventAggregatorAccessForSubscription = null;
+            //if (isEventSubscriber)
+            //{
+            //    var eventAggregatorInjection = injectionsToGenerate.FirstOrDefault(x => x.Type == "MvvmGen.Events.IEventAggregator");
+            //    if (eventAggregatorInjection is not null)
+            //    {
+            //        eventAggregatorAccessForSubscription = $"this.{eventAggregatorInjection.PropertyName}";
+            //    }
+            //    else
+            //    {
+            //        eventAggregatorAccessForSubscription = "eventAggregator";
+            //        first = false;
+            //        vmBuilder.Append($"MvvmGen.Events.IEventAggregator {eventAggregatorAccessForSubscription}");
+            //    }
+            //}
             string? eventAggregatorAccessForSubscription = null;
-            if (isEventSubscriber)
-            {
-                var eventAggregatorInjection = injectionsToGenerate.FirstOrDefault(x => x.Type == "MvvmGen.Events.IEventAggregator");
-                if (eventAggregatorInjection is not null)
-                {
-                    eventAggregatorAccessForSubscription = $"this.{eventAggregatorInjection.PropertyName}";
-                }
-                else
-                {
-                    eventAggregatorAccessForSubscription = "eventAggregator";
-                    first = false;
-                    vmBuilder.Append($"MvvmGen.Events.IEventAggregator {eventAggregatorAccessForSubscription}");
-                }
-            }
+            var first = vmBuilder.GenerateEventAggregator(injectionsToGenerate,isEventSubscriber, out eventAggregatorAccessForSubscription);
 
             foreach (var injectionToGenerate in injectionsToGenerate)
             {

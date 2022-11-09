@@ -8,6 +8,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using MvvmGen.Extensions;
 using MvvmGen.Model;
+using MvvmGen.SourceGenerators.Generators;
 
 namespace MvvmGen.Generators
 {
@@ -67,7 +68,9 @@ namespace MvvmGen.Generators
 
             vmBuilder.AppendLine();
             vmBuilder.Append($"public {viewModelClassName} Create() => new {viewModelClassName}(");
-            first = true;
+
+            first = vmBuilder.GenerateEventAggregator(injectionsToGenerate,viewModelToGenerate.IsEventSubscriber, out _);
+
             foreach (var injectionToGenerate in injectionsToGenerate)
             {
                 if (!first)
